@@ -172,4 +172,27 @@ diff -Naur micropython-1.15/py/emitnative.c micropython-phoenix/py/emitnative.c
              // comparison ops are (in enum order):
              //  MP_BINARY_OP_LESS
              //  MP_BINARY_OP_MORE
+diff -Naur micropython-1.15/py/mkenv.mk micropython-phoenix/py/mkenv.mk
+--- micropython-1.15/py/mkenv.mk	2021-05-11 10:08:32.002878112 +0200
++++ micropython-phoenix/py/mkenv.mk	2021-05-11 10:10:18.813584267 +0200
+@@ -47,7 +47,7 @@
+ TOUCH = touch
+ PYTHON = python3
  
+-CROSS_COMPILE = i386-pc-phoenix-
++CROSS_COMPILE ?= i386-pc-phoenix-
+ AS = $(CROSS_COMPILE)as
+ CC = $(CROSS_COMPILE)gcc
+ CXX = $(CROSS_COMPILE)g++
+diff -Naur micropython-1.15/py/mkrules.mk micropython-phoenix/py/mkrules.mk
+--- micropython-1.15/py/mkrules.mk	2021-04-18 16:27:07.000000000 +0200
++++ micropython-phoenix/py/mkrules.mk	2021-05-11 10:10:40.957510592 +0200
+@@ -184,7 +184,7 @@
+ 	$(ECHO) "LINK $@"
+ # Do not pass COPT here - it's *C* compiler optimizations. For example,
+ # we may want to compile using Thumb, but link with non-Thumb libc.
+-	$(Q)$(CC) -o $@ $^ $(LIB) $(LDFLAGS)
++	$(Q)$(CC) -o $@ $^ $(LIB) $(CFLAGS) $(LDFLAGS)
+ ifndef DEBUG
+ 	$(Q)$(STRIP) $(STRIPFLAGS_EXTRA) $(PROG)
+ endif

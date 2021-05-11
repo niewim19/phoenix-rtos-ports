@@ -638,3 +638,15 @@ diff -Naur micropython-1.15/ports/unix/variants/manifest.py micropython-phoenix/
 @@ -1,2 +0,0 @@
 -freeze_as_mpy('$(MPY_DIR)/tools', 'upip.py')
 -freeze_as_mpy('$(MPY_DIR)/tools', 'upip_utarfile.py', opt=3)
+diff -Naur micropython-1.15/ports/unix/main.c micropython-phoenix/ports/unix/main.c
+--- micropython-1.15/ports/unix/main.c  2021-05-11 10:49:06.896514508 +0200
++++ micropython-phoenix/ports/unix/main.c   2021-05-11 10:55:32.893597062 +0200
+@@ -906,7 +906,7 @@
+ }
+
+ #if !MICROPY_VFS
+-uint mp_import_stat(const char *path) {
++mp_import_stat_t mp_import_stat(const char *path) {
+     struct stat st;
+     if (stat(path, &st) == 0) {
+         if (S_ISDIR(st.st_mode)) {

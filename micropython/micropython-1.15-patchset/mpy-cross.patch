@@ -24,4 +24,15 @@ diff -Naur micropython-1.15/mpy-cross/main.c micropython-phoenix/mpy-cross/main.
      (void)path;
      return MP_IMPORT_STAT_NO_EXIST;
  }
- 
+diff -Naur micropython-1.15/mpy-cross/Makefile micropython-phoenix/mpy-cross/Makefile
+--- micropython-1.15/mpy-cross/Makefile 2021-04-18 16:27:07.000000000 +0200
++++ micropython-phoenix/mpy-cross/Makefile  2021-05-11 10:45:18.182486169 +0200
+@@ -19,7 +19,7 @@
+ # compiler settings
+ CWARN = -Wall -Werror
+ CWARN += -Wextra -Wno-unused-parameter -Wpointer-arith
+-CFLAGS = $(INC) $(CWARN) -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
++CFLAGS += $(INC) $(CWARN) -std=gnu99 $(CFLAGS_MOD) $(COPT) $(CFLAGS_EXTRA)
+ CFLAGS += -fdata-sections -ffunction-sections -fno-asynchronous-unwind-tables
+
+ # Debugging/Optimization
