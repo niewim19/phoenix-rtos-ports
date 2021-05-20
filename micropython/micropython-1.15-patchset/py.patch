@@ -93,7 +93,7 @@ diff -Naur micropython-1.15/py/mpconfig.h micropython-phoenix/py/mpconfig.h
  
  #ifndef MP_SSIZE_MAX
 -#define MP_SSIZE_MAX SSIZE_MAX
-+#define MP_SSIZE_MAX 9223372036854775807
++#define MP_SSIZE_MAX 0x7fffffff
  #endif
  
  // printf format spec to use for mp_int_t and friends
@@ -160,16 +160,4 @@ diff -Naur micropython-1.15/py/parsenum.h micropython-phoenix/py/parsenum.h
  #include "py/mpconfig.h"
  #include "py/lexer.h"
  #include "py/obj.h"
-diff -Naur micropython-1.15/py/emitnative.c micropython-phoenix/py/emitnative.c
---- micropython-1.15/py/emitnative.c	2021-04-18 16:27:07.000000000 +0200
-+++ micropython-phoenix/py/emitnative.c	2021-05-10 15:28:25.395437782 +0200
-@@ -2396,7 +2396,7 @@
-         } else if (op == MP_BINARY_OP_MULTIPLY) {
-             ASM_MUL_REG_REG(emit->as, REG_ARG_2, reg_rhs);
-             emit_post_push_reg(emit, vtype_lhs, REG_ARG_2);
--        } else if (MP_BINARY_OP_LESS <= op && op <= MP_BINARY_OP_NOT_EQUAL) {
-+        } else if (MP_BINARY_OP_LESS == op && op <= MP_BINARY_OP_NOT_EQUAL) {
-             // comparison ops are (in enum order):
-             //  MP_BINARY_OP_LESS
-             //  MP_BINARY_OP_MORE
  

@@ -240,6 +240,24 @@ diff -Naur micropython-1.15/ports/unix/main.c micropython-phoenix/ports/unix/mai
  // Command line options, with their defaults
  STATIC bool compile_only = false;
  STATIC uint emit_opt = MP_EMIT_OPT_NONE;
+@@ -59,7 +245,7 @@
+ #if MICROPY_ENABLE_GC
+ // Heap size of GC heap (if enabled)
+ // Make it larger on a 64 bit machine, because pointers are larger.
+-long heap_size = 1024 * 1024 * (sizeof(mp_uint_t) / 4);
++long heap_size = UPYTH_HEAPSZ * (sizeof(mp_uint_t) / 4);
+ #endif
+ 
+ STATIC void stderr_print_strn(void *env, const char *str, size_t len) {
+@@ -451,7 +637,7 @@
+     signal(SIGPIPE, SIG_IGN);
+     #endif
+ 
+-    mp_stack_set_limit(40000 * (sizeof(void *) / 4));
++    mp_stack_set_limit(UPYTH_STACKSZ * (sizeof(void *) / 4));
+ 
+     pre_process_options(argc, argv);
+ 
 @@ -643,7 +829,7 @@
                  return invalid_args();
              }
@@ -249,6 +267,15 @@ diff -Naur micropython-1.15/ports/unix/main.c micropython-phoenix/ports/unix/mai
              char *basedir = realpath(argv[a], pathbuf);
              if (basedir == NULL) {
                  mp_printf(&mp_stderr_print, "%s: can't open file '%s': [Errno %d] %s\n", argv[0], argv[a], errno, strerror(errno));
+@@ -720,7 +906,7 @@
+ }
+ 
+ #if !MICROPY_VFS
+-uint mp_import_stat(const char *path) {
++mp_import_stat_t mp_import_stat(const char *path) {
+     struct stat st;
+     if (stat(path, &st) == 0) {
+         if (S_ISDIR(st.st_mode)) {
 diff -Naur micropython-1.15/ports/unix/Makefile micropython-phoenix/ports/unix/Makefile
 --- micropython-1.15/ports/unix/Makefile	2021-04-14 07:35:31.000000000 +0200
 +++ micropython-phoenix/ports/unix/Makefile	2021-04-14 13:27:45.000000000 +0200
@@ -567,58 +594,6 @@ diff -Naur micropython-1.15/ports/unix/mpconfigport.mk micropython-phoenix/ports
  # mbedTLS is more up to date and complete implementation, but also
  # more bloated.
  MICROPY_SSL_MBEDTLS = 0
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy1.py micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy1.py
---- micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy1.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy1.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1 +0,0 @@
--print('frzmpy1')
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy2.py micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy2.py
---- micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy2.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy2.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1 +0,0 @@
--raise ZeroDivisionError
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy_pkg1/__init__.py micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy_pkg1/__init__.py
---- micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy_pkg1/__init__.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy_pkg1/__init__.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1,3 +0,0 @@
--# test frozen package with __init__.py
--print('frzmpy_pkg1.__init__')
--x = 1
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy_pkg2/mod.py micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy_pkg2/mod.py
---- micropython-1.15/ports/unix/variants/coverage/frzmpy/frzmpy_pkg2/mod.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzmpy_pkg2/mod.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1,4 +0,0 @@
--# test frozen package without __init__.py
--print('frzmpy_pkg2.mod')
--class Foo:
--    x = 1
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzmpy/frzqstr.py micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzqstr.py
---- micropython-1.15/ports/unix/variants/coverage/frzmpy/frzqstr.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzmpy/frzqstr.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1,3 +0,0 @@
--# Checks for regression on MP_QSTR_NULL
--def returns_NULL():
--    return "NULL"
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzstr/frzstr1.py micropython-phoenix/ports/unix/variants/coverage/frzstr/frzstr1.py
---- micropython-1.15/ports/unix/variants/coverage/frzstr/frzstr1.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzstr/frzstr1.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1 +0,0 @@
--print('frzstr1')
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzstr/frzstr_pkg1/__init__.py micropython-phoenix/ports/unix/variants/coverage/frzstr/frzstr_pkg1/__init__.py
---- micropython-1.15/ports/unix/variants/coverage/frzstr/frzstr_pkg1/__init__.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzstr/frzstr_pkg1/__init__.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1,3 +0,0 @@
--# test frozen package with __init__.py
--print('frzstr_pkg1.__init__')
--x = 1
-diff -Naur micropython-1.15/ports/unix/variants/coverage/frzstr/frzstr_pkg2/mod.py micropython-phoenix/ports/unix/variants/coverage/frzstr/frzstr_pkg2/mod.py
---- micropython-1.15/ports/unix/variants/coverage/frzstr/frzstr_pkg2/mod.py	2021-04-14 07:35:31.000000000 +0200
-+++ micropython-phoenix/ports/unix/variants/coverage/frzstr/frzstr_pkg2/mod.py	1970-01-01 01:00:00.000000000 +0100
-@@ -1,4 +0,0 @@
--# test frozen package without __init__.py
--print('frzstr_pkg2.mod')
--class Foo:
--    x = 1
 diff -Naur micropython-1.15/ports/unix/variants/coverage/manifest.py micropython-phoenix/ports/unix/variants/coverage/manifest.py
 --- micropython-1.15/ports/unix/variants/coverage/manifest.py	2021-04-14 07:35:31.000000000 +0200
 +++ micropython-phoenix/ports/unix/variants/coverage/manifest.py	1970-01-01 01:00:00.000000000 +0100
@@ -638,3 +613,14 @@ diff -Naur micropython-1.15/ports/unix/variants/manifest.py micropython-phoenix/
 @@ -1,2 +0,0 @@
 -freeze_as_mpy('$(MPY_DIR)/tools', 'upip.py')
 -freeze_as_mpy('$(MPY_DIR)/tools', 'upip_utarfile.py', opt=3)
+diff -Naur micropython-1.15/ports/unix/Makefile micropython-phoenix/ports/unix/Makefile
+--- micropython-1.15/ports/unix/Makefile	2021-05-13 09:07:54.950277800 +0200
++++ micropython-phoenix/ports/unix/Makefile	2021-05-13 09:09:23.524614575 +0200
+@@ -38,7 +38,7 @@
+ INC += -I$(BUILD)
+ 
+ # compiler settings
+-CWARN = -Wall -Werror
++CWARN = -Wall
+ CWARN += -Wextra -Wno-unused-parameter -Wpointer-arith -Wdouble-promotion -Wfloat-conversion
+ CFLAGS += $(INC) $(CWARN) -std=gnu99 -DUNIX $(CFLAGS_MOD) $(COPT) -I$(VARIANT_DIR) $(CFLAGS_EXTRA)
