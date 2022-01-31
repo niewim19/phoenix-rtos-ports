@@ -26,8 +26,6 @@
  * $FreeBSD: src/tools/regression/fstest/fstest.c,v 1.1 2007/01/17 01:42:07 pjd Exp $
  */
 
-#define _SC_NGROUPS_MAX 32
-
 #ifdef linux
 #define _GNU_SOURCE
 #endif
@@ -44,7 +42,7 @@
 #include <assert.h>
 
 #ifndef HAS_TRUNCATE64
-#define	truncate64	ftruncate
+#define	truncate64	truncate
 #endif
 #ifndef HAS_STAT64
 #define	stat64	stat

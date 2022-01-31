@@ -29,7 +29,7 @@ char *fs_mark_version = "3.3";
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
-#include <sys/statvfs.h> // instead of #include <sys/vfs.h>
+#include <sys/vfs.h>
 #include <sys/time.h>
 
 #include <fcntl.h>
@@ -41,12 +41,10 @@ char *fs_mark_version = "3.3";
 #include <dirent.h>
 #include <ctype.h>
 #include <time.h>
-#include <limits.h>
-#include <signal.h>
 
-//#include <linux/types.h>
-//#include <linux/limits.h>
-//#include <linux/unistd.h>
+#include <linux/types.h>
+#include <linux/limits.h>
+#include <linux/unistd.h>
 
 #include "fs_mark.h"
 
@@ -495,24 +493,23 @@ void setup(pid_t pid)
  */
 int get_df_full(char *dir_name)
 {
-	struct stat fs_buf;
+	struct statfs fs_buf;
 	float df_used, used_blocks;
 	int df_percent_used;
 
-	if (stat(dir_name, &fs_buf) == -1) {
+	if (statfs(dir_name, &fs_buf) == -1) {
 		fprintf(stderr, "fs_mark: statfs failed on %s %s\n", dir_name,
 			strerror(errno));
 		cleanup_exit();
 	}
 
-	// used_blocks = (float)(fs_buf.f_blocks - fs_buf.f_bavail);
+	used_blocks = (float)(fs_buf.f_blocks - fs_buf.f_bavail);
 
-	// df_used = (used_blocks / fs_buf.f_blocks);
+	df_used = (used_blocks / fs_buf.f_blocks);
 
-	// df_percent_used = (int)(100 * df_used);
+	df_percent_used = (int)(100 * df_used);
 
-	// return (df_percent_used);
-	return (int)100;
+	return (df_percent_used);
 }
 
 /*
@@ -520,20 +517,19 @@ int get_df_full(char *dir_name)
  */
 unsigned long long get_bytes_free(char *dir_name)
 {
-	struct stat fs_buf;
+	struct statfs fs_buf;
 	unsigned long long bytes_free;
 
-	if (stat(dir_name, &fs_buf) == -1) {
+	if (statfs(dir_name, &fs_buf) == -1) {
 		fprintf(stderr, "fs_mark: statfs failed on %s %s\n", dir_name,
 			strerror(errno));
 		cleanup_exit();
 	}
 
-	// bytes_free = (unsigned long long)fs_buf.f_bavail;
-	// bytes_free = bytes_free * fs_buf.f_bsize;
+	bytes_free = (unsigned long long)fs_buf.f_bavail;
+	bytes_free = bytes_free * fs_buf.f_bsize;
 
-	// return (bytes_free);
-	return 1000000;
+	return (bytes_free);
 }
 
 /*

@@ -24,8 +24,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <arch/ia32/types.h>
-//#include <linux/types.h>
+#include <linux/types.h>
 
 #define	nz(x)	((x) == 0 ? 1 : (x))
 

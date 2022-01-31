@@ -9,7 +9,7 @@
 all:	fstest
 
 fstest:	fstest.c
-	${CROSS}gcc ${CFLAGS} fstest.c -o fstest
+	gcc -Wall ${CFLAGS} fstest.c -o fstest
 
 clean:
 	rm -f fstest
