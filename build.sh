@@ -63,4 +63,6 @@ fi
 
 [ "${PORTS_LIBEVENT}" = "y" ] && ./phoenix-rtos-ports/libevent/build.sh
 
+[ "${PORTS_FSBENCH}" = "y" ] && ./phoenix-rtos-ports/fsbench/build.sh
+
 exit 0
